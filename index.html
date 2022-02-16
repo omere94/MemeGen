@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/main.css">
+    <title>Meme Generator</title>
+</head>
+<body onload="onInit()">
+
+    
+    <nav class="nav-container container">
+        <img class="logo" src="icons/logo.png" />
+        <ul class="nav">
+            <li class="nav-gallery" data-trans="gallery" onclick="onGetGalleryPage()">Gallery</li>
+            <li class="nav-lang">
+                <select onchange="onSetLang(value)" class="lang-select">
+                    <option value="en" data-trans="english">English</option>
+                    <option value="he" data-trans="hebrew">Hebrew</option>
+                </select>
+            </li>
+        </ul>
+        <button class="menu-btn icon icon--slider" type="button" onclick="toggleMenu()">
+            <span class="icon-box">
+                <span class="icon-inner"></span>
+            </span>
+        </button>
+    </nav>
+
+    <div class="search-container container">
+        <div class="search-by-typing">
+            <input type="text" list="meme-theme" data-trans="search-typing" placeholder="Enter search keyword"
+                onkeyup="onFilterMemes(value)">
+            <img src="icons/search-icon.png">
+            <datalist id="meme-theme">
+                <option data-trans="funny" value="funny">
+                <option data-trans="celebrity" value="celebrity">
+                <option data-trans="politic" value="politic">
+                <option data-trans="cute" value="cute">
+                <option data-trans="animal" value="animal">
+            </datalist>
+        </div>
+
+        <div class="search-by-keywords"></div>
+    </div>
+
+    <div class="main-container container">
+        <div class="gallery-container"></div>
+    </div>
+
+    <div class="side-container container">
+        <div class="meme-container"></div>
+    </div>
+
+    <div class="canvas-container container">
+        <canvas id="meme-canvas" height="450" width="450" style="border: 1px solid black;"></canvas>
+        <div class="meme-control">
+            <input type="text" class="control-txt-input" value="" onkeyup="onChangeText(value)" title="Change Text"
+                data-trans="change-text">
+            <div class="btn-group1">
+                <button class="control-btn" onclick="onSwitchLines()" title="Switch Text" data-trans="switch-text"><img
+                        src="icons/switch.png" /></button>
+                <button class="control-btn" onclick="onAddLine()" title="Add New Text" data-trans="new-text"><img
+                        src="icons/add.png" /></button>
+                <button class="control-btn" onclick="onDeleteLine()" title="Delete Text" data-trans="delete-text"><img
+                        src="icons/trash.png" /></button>
+                <input type="file" id="file" class="inputfile" name="image" onchange="onUploadImg(event)" />
+                <label for="file" data-trans="upload-img">Upload image</label>
+            </div>
+
+            <footer class="footer-container container">
+                <img class="logo" src="icons/logo.png" />
+                <p data-trans="rights">Devloped By Omer Eshkoli CaJan22</p>
+            </footer>
+
+    <script src="js/local-storage.js"></script>
+    <script src="js/memegen-service.js"></script>
+    <script src="js/memegen-gallery-controller.js"></script>
+    <script src="js/memegen-controller.js"></script>
+</body>
+</html>
