@@ -1,6 +1,9 @@
 * {
     box-sizing: border-box;
     outline: none;
+    font-family: Pacifico, sans-serif;
+    font-family: Sacramento, sans-serif;
+    font-family: Montserrat, sans-serif;
 }
 
 body {
@@ -37,9 +40,15 @@ body.none-scroll {
     overflow: hidden;
 }
 
+
+/*** Layout ***/
+
 .container {
     padding: 0 40px;
 }
+
+
+/*** Nav ***/
 
 .icon {
     display: none;
@@ -85,6 +94,8 @@ li.active {
     height: 24px;
 }
 
+/*** Gallery ***/
+
 .main-container {
     background-color: #e3e3e3;
 }
@@ -108,6 +119,27 @@ li.active {
     opacity: 0.85;
     border: 1px solid white;
 }
+
+/*** Canvas ***/
+
+canvas {
+    cursor: crosshair;
+}
+
+.canvas-container {
+    display: none;
+    background-color: aquamarine;
+    top: 80px;
+    width: 100%;
+    height: 100% - 80px;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: #e3e3e3;
+    padding: 40px 0;
+}
+
+
+/*** Control ***/
 
 .meme-control {
     display: grid;
@@ -147,13 +179,7 @@ li.active {
     cursor: pointer;
 }
 
-.stickers-btn {
-    height: 50px;
-    border: none;
-    border-radius: 12px;
-    background-color: #ffffff;
-    cursor: pointer;
-}
+
 
 .control-select {
     grid-column: 1 / 4;
@@ -171,13 +197,6 @@ li.active {
 
 .control-btn img {
     width: 70%;
-}
-
-.save-btn,
-.download-btn,
-.share-btn {
-    color: #000000;
-    font-size: 1.25rem;
 }
 
 .download-btn {
@@ -238,6 +257,8 @@ a {
     text-align: center;
 }
 
+/*** Footer ***/
+
 .footer-container {
     position: static;
     display: flex;
@@ -251,30 +272,4 @@ a {
     margin: 0 auto;
     font-size: 19px;
     padding-bottom: 0 !important;
-}
-
-.icon {
-    display: block;
-    z-index: 2;
-}
-.nav {
-    display: none;
-    flex-direction: column;
-    justify-content: space-evenly;
-    position: absolute;
-    z-index: 3;
-    right: 0;
-    top: 50px;
-    background-color: #ff7f00;
-    width: 100vw;
-    height: 40vh;
-    border-top: 1px dashed #040a2c;
-    box-shadow: -9px 16px 22px -12px rgba(0, 0, 0, 0.75);
-    padding-left: 50px;
-}
-.menu-open .nav {
-    display: flex;
-}
-li {
-    margin: 0;
 }

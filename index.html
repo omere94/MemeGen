@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Meme Generator</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/main.css">
-    <title>Meme Generator</title>
 </head>
+
 <body onload="onInit()">
 
-    
+    <div class="screen" onclick="toggleMenu()"></div>
+
     <nav class="nav-container container">
         <img class="logo" src="icons/logo.png" />
         <ul class="nav">
@@ -69,15 +72,41 @@
                 <input type="file" id="file" class="inputfile" name="image" onchange="onUploadImg(event)" />
                 <label for="file" data-trans="upload-img">Upload image</label>
             </div>
+            <button class="control-btn" onclick="onChangeSize(1)" title="Increase" data-trans="increase"><img
+                    src="icons/increase-font.png" /></button>
+            <button class="control-btn" onclick="onChangeSize(-1)" title="Decrease" data-trans="decrease"><img
+                    src="icons/decrease-font.png" /></button>
+            <button class="control-btn" onclick="onChangeAlign('right')" title="Align Left" data-trans="align_left"><img
+                    src="icons/align-to-left.png" /></button>
+            <button class="control-btn" onclick="onChangeAlign('center')" title="Align Center"
+                data-trans="align_center"><img src="icons/align-center.png" /></button>
+            <button class="control-btn" onclick="onChangeAlign('left')" title="Align Right"
+                data-trans="align_right"><img src="icons/align-to-right.png" /></button>
+            <button class="control-btn"><input class="control-color-input" type="color"
+                    onchange="onChangeOutlineColor(value)" title="Choose Outline color"
+                    data-trans="outline-color" /><img src="icons/text-stroke.png"></button>
+            <button class="control-btn"><input class="control-color-input" type="color"
+                    onchange="onChangeFillColor(value)" title="Choose color" data-trans="fill-color" /><img
+                    src="icons/paint-board-and-brush.png"></button>
+            <button class="control-btn download-btn"><a href="#" onclick="onDownloadCanvas(this)" download=""
+                    data-trans="download">Download</a></button>
+            <form action="" method="POST" enctype="multipart/form-data" onsubmit="uploadImg(this, event)">
+                <input name="img" id="imgData" type="hidden" />
+                <button class="control-btn share-btn" type="submit" onsubmit="uploadImg(this, event)"
+                    data-trans="share">Share on FaceBook</button></form>
+        </div>
+    </div>
+    </div>
 
-            <footer class="footer-container container">
-                <img class="logo" src="icons/logo.png" />
-                <p data-trans="rights">Devloped By Omer Eshkoli CaJan22</p>
-            </footer>
+    <footer class="footer-container container">
+        <img class="logo" src="icons/logo.png" />
+        <p data-trans="rights">Devloped By Omer Eshkoli CaJan22</p>
+    </footer>
 
     <script src="js/local-storage.js"></script>
     <script src="js/memegen-service.js"></script>
     <script src="js/memegen-gallery-controller.js"></script>
     <script src="js/memegen-controller.js"></script>
 </body>
+
 </html>

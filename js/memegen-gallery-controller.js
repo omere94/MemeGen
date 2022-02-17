@@ -17,7 +17,7 @@ function onRenderGallery() {
 }
 
 function onSetLang(lang) {
-    onSetLang(lang);
+    setLang(lang);
     if (lang === 'he') document.body.classList.add('rtl');
     else document.body.classList.remove('rtl');
 }
@@ -51,22 +51,39 @@ function onRenderKeywords() {
     document.querySelector('.search-by-keywords').innerHTML = strHtml;
 }
 
-function renderLocalStorage() {
-    gSavedMemes = loadFromStorage(keyMemes);
-    gSavedImgs = loadFromStorage(keyImgs);
+function onFilterMemes(txt, isKeyword = false) {
+    var imgs = getImges();
+    var newImgs = imgs.filter(img => {
+        var keywords = img.keywords;
+        var isInclude = keywords.find(keyword => keyword.startsWith(txt.toLowerCase()))
+        if (isInclude) return img;
+    })
+    var strHtml = ``;
+    newImgs.forEach(img => {
+        strHtml += `<img src="${img.url}" id="img-num-${img.id}" onclick="onRenderCanvas(${img.id})">`;
+    })
+    document.querySelector('.gallery-container').innerHTML = strHtml;
+    document.querySelector('.nav-gallery').classList.add('active');
+    if (isKeyword) {
+        document.querySelector('input').value = txt;
+        addClickToKeyword(txt);
+    }
+    onRenderKeywords()
+    if (openKeywords) document.querySelector('.search-more').classList.toggle('block');
 }
 
-
-function onEditCurrMeme(idx) {
-    editCurrMeme(idx);
-    var meme = getMeme();
-    onRenderCanvas(meme.selectedImgId);
-}
+var openKeywords = false;
 
 function onMore() {
     document.querySelector('.search-more').classList.toggle('block');
     if (!openKeywords) openKeywords = true;
     else openKeywords = false;
+}
+
+function onEditCurrMeme(idx) {
+    editCurrMeme(idx);
+    var meme = getMeme();
+    onRenderCanvas(meme.selectedImgId);
 }
 
 function onRenderCanvas(imgId) {
@@ -90,3 +107,5 @@ function onGetGalleryPage() {
     document.querySelector('.search-container').style.display = "flex";
     document.querySelector('.nav-gallery').classList.add('active');
 }
+
+

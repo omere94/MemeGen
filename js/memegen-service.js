@@ -160,53 +160,99 @@ function getImges() {
     return gImgs;
 }
 
+function getStickers() {
+    return gStickers;
+}
+
 function getKeywords() {
     return gKeywords;
 }
 
-function createImgs() {
-    gImgs = [
-        createImg(1, ['funny', 'sweet']),
-        createImg(2, ['funny', 'scary']),
-        createImg(3, ['funny', 'sweet']),
-        createImg(4, ['funny', 'sweet']),
-        createImg(5, ['funny', 'scary']),
-        createImg(6, ['funny', 'sweet']),
-        createImg(7, ['funny', 'sweet']),
-        createImg(8, ['funny', 'scary']),
-        createImg(9, ['funny', 'sweet']),
-        createImg(10, ['funny', 'sweet']),
-        createImg(11, ['funny', 'scary']),
-        createImg(12, ['funny', 'sweet']),
-        createImg(13, ['funny', 'sweet']),
-        createImg(14, ['funny', 'scary']),
-        createImg(15, ['funny', 'sweet']),
-        createImg(16, ['funny', 'sweet']),
-        createImg(17, ['funny', 'scary']),
-        createImg(18, ['funny', 'sweet'])
-    ]
-}
-
-
-function createImg(id, keywords) {
-    var img = {
-        id,
-        url: `img/${id}.jpg`,
-        keywords
-    }
-    return img
-}
-
-function setLineTxt(txt) {
-    gMeme.lines[0] = txt
-}
-
-function updateMemeImg(id) {
-    gMeme.selectedImgId = id
+function updateMemeImg(imgId) {
+    gMeme.selectedImgId = imgId;
 }
 
 function getSelectedImg() {
     return gMeme.selectedImgId;
+}
+
+function editMeme(key, value) {
+    if (gMeme.lines.length === 0) return;
+    const lineIdx = gMeme.selectedLineIdx;
+    gMeme.lines[lineIdx][key] = value;
+}
+
+function changeSize(num) {
+    if (gFocustxt) {
+        if (gMeme.lines.length === 0) return;
+        const lineIdx = gMeme.selectedLineIdx;
+        gMeme.lines[lineIdx].size += num;
+    }
+    if (gFocusSticker) {
+        if (gMeme.stickers.length === 0) return;
+        const stickersIdx = gMeme.selectedStickerIdx;
+        gMeme.stickers[stickersIdx].height += num;
+        gMeme.stickers[stickersIdx].width += num;
+    }
+}
+
+function changePosTexts(width, height) {
+    gMeme.lines.forEach(line => {
+        line.positionX = (width / 2)
+        if (line.positionY > height) line.positionY = (height - 20);
+    })
+}
+
+function changePosForMobile(pos) {
+    gMeme.lines.forEach(line => {
+        line.positionX = (pos / 2)
+        if (line.positionY > pos - 20) line.positionY = (pos - 20);
+    })
+}
+
+function changePositionY(num) {
+    if (gFocustxt) {
+        if (gMeme.lines.length === 0) return;
+        const lineIdx = gMeme.selectedLineIdx;
+        gMeme.lines[lineIdx].positionY += num;
+    }
+    if (gFocusSticker) {
+        if (gMeme.stickers.length === 0) return;
+        const stickerIdx = gMeme.selectedStickerIdx;
+        gMeme.stickers[stickerIdx].positionY += num;
+    }
+}
+
+function changePositionX(num) {
+    if (gFocustxt) {
+        if (gMeme.lines.length === 0) return;
+        const lineIdx = gMeme.selectedLineIdx;
+        gMeme.lines[lineIdx].positionX += num;
+    }
+    if (gFocusSticker) {
+        if (gMeme.stickers.length === 0) return;
+        const stickerIdx = gMeme.selectedStickerIdx;
+        gMeme.stickers[stickerIdx].positionX += num;
+    }
+}
+
+function switchLines() {
+    if (gMeme.lines.length === 0) return;
+    if (gMeme.selectedLineIdx === gMeme.lines.length - 1) gMeme.selectedLineIdx = 0;
+    else gMeme.selectedLineIdx++;
+}
+
+function switchLinesDrogDrop(idx) {
+    gMeme.selectedLineIdx = idx;
+}
+
+function switchStickers(id) {
+    var focusSticker = gMeme.stickers.findIndex(sticker => sticker.id === id)
+    gMeme.selectedStickerIdx = focusSticker;
+}
+
+function switchStickersDrogDrop(idx) {
+    gMeme.selectedStickerIdx = idx;
 }
 
 function deleteLine() {
@@ -217,10 +263,9 @@ function deleteLine() {
     gMeme.lines.splice(lineIdx, 1);
 }
 
-function switchLines() {
-    if (gMeme.lines.length === 0) return;
-    if (gMeme.selectedLineIdx === gMeme.lines.length - 1) gMeme.selectedLineIdx = 0;
-    else gMeme.selectedLineIdx++;
+function updateDragging(idx, type, bool) {
+    if (type === 'lines') gMeme.lines[idx].isDragging = bool;
+    if (type === 'stickers') gMeme.stickers[idx].isDragging = bool;
 }
 
 function addLine() {
@@ -238,9 +283,62 @@ function addLine() {
     gMeme.selectedLineIdx = gMeme.lines.length - 1;
 }
 
-function changePosTexts(width, height) {
-    gMeme.lines.forEach(line => {
-        line.positionX = (width / 2)
-        if (line.positionY > height) line.positionY = (height - 20);
-    })
+function addSticker(sticker) {
+    gMeme.stickers.push(sticker);
+    gMeme.selectedStickerIdx = gMeme.stickers.length - 1;
+}
+
+
+function renderLocalStorage() {
+    gSavedMemes = loadFromStorage(keyMemes);
+    gSavedImgs = loadFromStorage(keyImgs);
+}
+
+function saveImg(data) {
+    gSavedImgs.unshift(data);
+    saveToStorage(keyImgs, gSavedImgs);
+}
+
+function saveAndRestartMeme() {
+    gSavedMemes.unshift(gMeme);
+    saveToStorage(keyMemes, gSavedMemes);
+    restartMeme();
+}
+
+function restartMeme() {
+    gMeme = {
+        selectedImgId: 0,
+        selectedLineIdx: 0,
+        selectedStickerIdx: 0,
+        lines: [{
+            txt: 'I Never Play Basketball',
+            font: 'impact',
+            size: 40,
+            align: 'center',
+            OutlineColor: 'black',
+            fillColor: 'white',
+            positionX: 225,
+            positionY: 50,
+            isDragging: false
+        }, {
+            txt: 'I Love Basketball',
+            font: 'impact',
+            size: 40,
+            align: 'center',
+            OutlineColor: 'black',
+            fillColor: 'white',
+            positionX: 225,
+            positionY: 430,
+            isDragging: false
+        }],
+        stickers: []
+    }
+}
+
+function editCurrMeme(idx) {
+    gMeme = gSavedMemes[idx];
+}
+
+function addClickToKeyword(txt) {
+    gKeywords[txt]++;
 }

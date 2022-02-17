@@ -2,15 +2,15 @@
 
 var gCanvas;
 var gCtx;
-var gFirstLoad;
-var gIsLocalImg;
+var gFirstLoad = true;
+var gIsLocalImg = false;
 var gLocalImg;
-var gNoFocus;
-var gDragOn;
-var gFocustxt;
-var gFocusSticker;
+var gNoFocus = false;
+var gDragOn = false;
+var gFocustxt = true;
 var gCurrPosX;
 var gCurrPosY;
+
 
 function renderCanvas() {
     gCanvas = document.querySelector('#meme-canvas');
@@ -21,18 +21,21 @@ function renderCanvas() {
     if (!gNoFocus) drawFocusRect();
     else gNoFocus = false;
     renderText();
-    drawStickers();
+    addDragDrop();
 }
 
 function resizeCanvas() {
     var imgId = getSelectedImg();
     var elImg = document.querySelector(`#img-num-${imgId}`);
     var ratio = elImg.width / elImg.height;
+    if (isMobileDevice()) {
         gCanvas.width = window.innerWidth - 15;
         gCanvas.height = (gCanvas.width / ratio);
         document.querySelector('.meme-control').style.width = `"${window.innerWidth}px"`;
+    } else {
         gCanvas.width = 500;
         gCanvas.height = (gCanvas.width / ratio);
+    }
     changePosTexts(gCanvas.width, gCanvas.height);
     gFirstLoad = false;
 }
@@ -56,14 +59,15 @@ function renderText() {
     document.querySelector('.control-txt-input').value = selectedLine.txt;
 }
 
-function drawStickers() {
-    var meme = getMeme();
-    var stickers = meme.stickers;
-    if (stickers.length === 0) return;
-    else stickers.forEach(sticker => {
-        var elSticker = document.querySelector(`#sticker-num-${sticker.id}`);
-        gCtx.drawImage(elSticker, sticker.positionX, sticker.positionY, sticker.width, sticker.height);
-    })
+function drawText(line) {
+    gCtx.setLineDash([]);
+    gCtx.lineWidth = '1';
+    gCtx.strokeStyle = line.OutlineColor;
+    gCtx.fillStyle = line.fillColor;
+    gCtx.font = `${line.size}px ${line.font}`;
+    gCtx.textAlign = line.align;
+    gCtx.fillText(line.txt, line.positionX, line.positionY);
+    gCtx.strokeText(line.txt, line.positionX, line.positionY);
 }
 
 function drawFocusRect() {
@@ -79,27 +83,55 @@ function drawFocusRect() {
         gCtx.strokeStyle = 'black';
         gCtx.stroke();
     }
-    if (gFocusSticker) {
-        var sticker = meme.stickers[meme.selectedStickerIdx];
-        var posX = sticker.positionX;
-        var posY = sticker.positionY;
-        gCtx.beginPath();
-        gCtx.rect(posX - 10, posY - 10, sticker.width + 20, sticker.height + 20);
-        gCtx.setLineDash([4, 4]);
-        gCtx.strokeStyle = 'black';
-        gCtx.stroke();
-    }
 }
 
-function drawText(line) {
-    gCtx.setLineDash([]);
-    gCtx.lineWidth = '1';
-    gCtx.strokeStyle = line.OutlineColor;
-    gCtx.fillStyle = line.fillColor;
-    gCtx.font = `${line.size}px ${line.font}`;
-    gCtx.textAlign = line.align;
-    gCtx.fillText(line.txt, line.positionX, line.positionY);
-    gCtx.strokeText(line.txt, line.positionX, line.positionY);
+function onChangeText(txt) {
+    editMeme('txt', txt);
+    gFocustxt = true;
+    gFocusSticker = false;
+    renderCanvas();
+}
+
+function onChangeAlign(align) {
+    editMeme('align', align);
+    renderCanvas();
+}
+
+function onChangeOutlineColor(value) {
+    editMeme('OutlineColor', value);
+    renderCanvas();
+}
+
+function onChangeFillColor(value) {
+    editMeme('fillColor', value);
+    renderCanvas();
+}
+
+function onChangeSize(num) {
+    changeSize(num);
+    renderCanvas();
+}
+
+function onChangeFont(font) {
+    editMeme('font', font);
+    renderCanvas();
+}
+
+function onChangePositionY(num) {
+    changePositionY(num);
+    renderCanvas();
+}
+
+function onChangePositionX(num) {
+    changePositionX(num);
+    renderCanvas();
+}
+
+function onSwitchLines() {
+    switchLines();
+    gFocustxt = true;
+    gFocusSticker = false;
+    renderCanvas();
 }
 
 function onDeleteLine() {
@@ -114,16 +146,146 @@ function onAddLine() {
     renderCanvas();
 }
 
-function onChangeText(txt) {
-    editMeme('txt', txt);
-    gFocustxt = true;
-    gFocusSticker = false;
+function onDownloadCanvas(elLink) {
+    gNoFocus = true;
     renderCanvas();
+    const data = gCanvas.toDataURL();
+    elLink.href = data;
+    elLink.download = 'Img';
 }
 
-function onSwitchLines() {
-    switchLines();
-    gFocustxt = true;
-    gFocusSticker = false;
+
+function uploadImg(elForm, ev) {
+    ev.preventDefault();
+    gNoFocus = true;
     renderCanvas();
+    document.getElementById('imgData').value = gCanvas.toDataURL("image/jpeg");
+
+    function onSuccess(uploadedImgUrl) {
+        uploadedImgUrl = encodeURIComponent(uploadedImgUrl);
+        window.open(`https://www.facebook.com/sharer.php?u=${uploadedImgUrl}&t=${uploadedImgUrl}`)
+    }
+    doUploadImg(elForm, onSuccess)
 }
+
+function doUploadImg(elForm, onSuccess) {
+    var formData = new FormData(elForm)
+    fetch('https://ca-upload.com/here/upload.php', {
+        method: 'POST',
+        body: formData
+    })
+        .then(function (res) {
+            return res.text()
+        })
+        .then(onSuccess)
+        .catch(function (err) {
+            console.error(err)
+        })
+}
+
+function onUploadImg(ev) {
+    loadImageFromInput(ev, renderCanvas);
+    gIsLocalImg = true;
+}
+
+function loadImageFromInput(ev, onImageReady) {
+    var reader = new FileReader();
+
+    reader.onload = function (event) {
+        gLocalImg = new Image();
+        gLocalImg.onload = onImageReady.bind(null, gLocalImg)
+        gLocalImg.src = event.target.result;
+    }
+    reader.readAsDataURL(ev.target.files[0]);
+}
+
+function addDragDrop() {
+    gCanvas.addEventListener('mousedown', dragText);
+    gCanvas.addEventListener('mouseup', dropText);
+    gCanvas.addEventListener('mousemove', moveText);
+    gCanvas.addEventListener('touchstart', dragText);
+    gCanvas.addEventListener('touchend', dropText);
+    gCanvas.addEventListener('touchmove', moveText);
+}
+
+
+function dragText(ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    var offsetX;
+    var offsetY;
+    if (ev.type === 'touchstart') {
+        offsetX = ev.changedTouches[0].pageX - gCanvas.getBoundingClientRect().left;
+        offsetY = ev.changedTouches[0].pageY - gCanvas.getBoundingClientRect().top;
+    } else {
+        offsetX = ev.offsetX;
+        offsetY = ev.offsetY;
+    }
+    var meme = getMeme();
+    var lines = meme.lines;
+    var idx = 0;
+    lines.forEach(function (line) {
+        if (offsetX > line.positionX - 160 &&
+            offsetX < line.positionX + 160 &&
+            offsetY > line.positionY - 40 &&
+            offsetY < line.positionY + 10) {
+            switchLinesDrogDrop(idx);
+            updateDragging(idx, 'lines', true);
+            document.querySelector('.control-txt-input').value = line.txt;
+            renderCanvas();
+            gDragOn = true;
+            gFocustxt = true;
+            gFocusSticker = false;
+            return;
+        }
+        idx++;
+    })
+}
+
+function dropText(ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    gDragOn = false;
+    var meme = getMeme();
+    if (gFocustxt) {
+        var lines = meme.lines;
+        var idx = 0;
+        lines.forEach(function (line) {
+            if (line.isDragging) {
+                updateDragging(idx, 'lines', false);
+                return;
+            }
+            idx++;
+        })
+    }
+}
+
+function moveText(ev) {
+    if (gDragOn) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        var offsetX;
+        var offsetY;
+        if (ev.type === 'touchmove') {
+            offsetX = ev.changedTouches[0].pageX - gCanvas.getBoundingClientRect().left;
+            offsetY = ev.changedTouches[0].pageY - gCanvas.getBoundingClientRect().top;
+        } else {
+            offsetX = ev.offsetX;
+            offsetY = ev.offsetY;
+        }
+        var disX = offsetX - gCurrPosX;
+        var disY = offsetY - gCurrPosY;
+        var meme = getMeme();
+        if (gFocustxt) {
+            var lines = meme.lines;
+            lines.forEach(function (line) {
+                if (line.isDragging) {
+                    changePositionX(disX);
+                    changePositionY(disY);
+                }
+            })
+        }
+    }
+
+}
+    
