@@ -124,11 +124,63 @@ var gImgs = [{
     keywords: ['movie', 'cartoon']
 }]
 
+var gStickers = [{
+    id: 1,
+    url: 'stickers/1.png',
+    positionX: 225,
+    positionY: 225,
+    isDragging: false,
+    height: 32,
+    width: 85
+
+}, {
+    id: 2,
+    url: 'stickers/2.png',
+    positionX: 225,
+    positionY: 225,
+    isDragging: false,
+    height: 42,
+    width: 103
+}, {
+    id: 3,
+    url: 'stickers/3.png',
+    positionX: 225,
+    positionY: 225,
+    isDragging: false,
+    height: 71,
+    width: 74
+}, {
+    id: 4,
+    url: 'stickers/4.png',
+    positionX: 225,
+    positionY: 225,
+    isDragging: false,
+    height: 102,
+    width: 102
+}, {
+    id: 5,
+    url: 'stickers/5.png',
+    positionX: 225,
+    positionY: 225,
+    isDragging: false,
+    height: 74,
+    width: 82
+}, {
+    id: 6,
+    url: 'stickers/6.png',
+    positionX: 225,
+    positionY: 225,
+    isDragging: false,
+    height: 92,
+    width: 62
+}]
+
 var gMeme = {
     selectedImgId: 0,
     selectedLineIdx: 0,
+    selectedStickerIdx: 0,
     lines: [{
-        txt: 'I Never Play Basketball',
+        txt: 'I Live For The Applause',
         font: 'impact',
         size: 40,
         align: 'center',
@@ -138,7 +190,7 @@ var gMeme = {
         positionY: 50,
         isDragging: false
     }, {
-        txt: 'I Love Basketball',
+        txt: 'I Love CaJan22',
         font: 'impact',
         size: 40,
         align: 'center',
@@ -148,6 +200,7 @@ var gMeme = {
         positionY: 430,
         isDragging: false
     }],
+    stickers: []
 }
 
 function getMeme() {
@@ -156,6 +209,10 @@ function getMeme() {
 
 function getImges() {
     return gImgs;
+}
+
+function getStickers() {
+    return gStickers;
 }
 
 function getKeywords() {
@@ -182,6 +239,12 @@ function changeSize(num) {
         const lineIdx = gMeme.selectedLineIdx;
         gMeme.lines[lineIdx].size += num;
     }
+    if (gFocusSticker) {
+        if (gMeme.stickers.length === 0) return;
+        const stickersIdx = gMeme.selectedStickerIdx;
+        gMeme.stickers[stickersIdx].height += num;
+        gMeme.stickers[stickersIdx].width += num;
+    }
 }
 
 function changePosTexts(width, height) {
@@ -204,6 +267,11 @@ function changePositionY(num) {
         const lineIdx = gMeme.selectedLineIdx;
         gMeme.lines[lineIdx].positionY += num;
     }
+    if (gFocusSticker) {
+        if (gMeme.stickers.length === 0) return;
+        const stickerIdx = gMeme.selectedStickerIdx;
+        gMeme.stickers[stickerIdx].positionY += num;
+    }
 }
 
 function changePositionX(num) {
@@ -211,6 +279,11 @@ function changePositionX(num) {
         if (gMeme.lines.length === 0) return;
         const lineIdx = gMeme.selectedLineIdx;
         gMeme.lines[lineIdx].positionX += num;
+    }
+    if (gFocusSticker) {
+        if (gMeme.stickers.length === 0) return;
+        const stickerIdx = gMeme.selectedStickerIdx;
+        gMeme.stickers[stickerIdx].positionX += num;
     }
 }
 
@@ -224,8 +297,18 @@ function switchLinesDrogDrop(idx) {
     gMeme.selectedLineIdx = idx;
 }
 
+function switchStickers(id) {
+    var focusSticker = gMeme.stickers.findIndex(sticker => sticker.id === id)
+    gMeme.selectedStickerIdx = focusSticker;
+}
+
+function switchStickersDrogDrop(idx) {
+    gMeme.selectedStickerIdx = idx;
+}
+
 function deleteLine() {
     if (gMeme.lines.length === 0) return;
+    if (gFocusSticker) return;
     const lineIdx = gMeme.selectedLineIdx;
     gMeme.selectedLineIdx = 0;
     gMeme.lines.splice(lineIdx, 1);
@@ -233,6 +316,7 @@ function deleteLine() {
 
 function updateDragging(idx, type, bool) {
     if (type === 'lines') gMeme.lines[idx].isDragging = bool;
+    if (type === 'stickers') gMeme.stickers[idx].isDragging = bool;
 }
 
 function addLine() {
@@ -248,6 +332,11 @@ function addLine() {
     }
     gMeme.lines.push(line);
     gMeme.selectedLineIdx = gMeme.lines.length - 1;
+}
+
+function addSticker(sticker) {
+    gMeme.stickers.push(sticker);
+    gMeme.selectedStickerIdx = gMeme.stickers.length - 1;
 }
 
 function renderLocalStorage() {
@@ -270,8 +359,9 @@ function restartMeme() {
     gMeme = {
         selectedImgId: 0,
         selectedLineIdx: 0,
+        selectedStickerIdx: 0,
         lines: [{
-            txt: 'I Never Play Basketball',
+            txt: 'I Live For The Applause',
             font: 'impact',
             size: 40,
             align: 'center',
@@ -281,7 +371,7 @@ function restartMeme() {
             positionY: 50,
             isDragging: false
         }, {
-            txt: 'I Love Basketball',
+            txt: 'I Love CaJan22',
             font: 'impact',
             size: 40,
             align: 'center',
@@ -291,6 +381,7 @@ function restartMeme() {
             positionY: 430,
             isDragging: false
         }],
+        stickers: []
     }
 }
 
@@ -300,4 +391,12 @@ function editCurrMeme(idx) {
 
 function addClickToKeyword(txt) {
     gKeywords[txt]++;
+}
+
+function getSavedMemes() {
+    return gSavedMemes;
+}
+
+function getSavedImgs() {
+    return gSavedImgs;
 }

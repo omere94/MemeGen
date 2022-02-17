@@ -49,6 +49,7 @@ function onRenderKeywords() {
     }
     strHtml += `</div>`;
     document.querySelector('.search-by-keywords').innerHTML = strHtml;
+    doTrans();
 }
 
 function onFilterMemes(txt, isKeyword = false) {
@@ -89,6 +90,7 @@ function onEditCurrMeme(idx) {
 function onRenderCanvas(imgId) {
     updateMemeImg(imgId);
     renderCanvas();
+    onRenderStickers();
     gFirstLoad = true;
     document.querySelector('.canvas-container').style.display = "flex";
     document.querySelector('.gallery-container').style.display = "none";
@@ -100,11 +102,13 @@ function onGetGalleryPage() {
     restartMeme();
     gFirstLoad = true;
     gFocustxt = true;
+    gFocusSticker = false;
     document.querySelector('.canvas-container').style.display = "none";
     document.querySelector('.gallery-container').style.display = "grid";
     document.querySelector('.meme-container').style.display = "none";
     document.querySelector('.search-container').style.display = "flex";
     document.querySelector('.nav-gallery').classList.add('active');
 }
+
 
 

@@ -14,6 +14,33 @@
     overflow: visible;
 }
 
+.icon:hover {
+    opacity: 0.7;
+}
+
+.icon.is-active:hover {
+    opacity: 0.7;
+}
+
+.icon.is-active .icon-inner,
+.icon.is-active .icon-inner::before,
+.icon.is-active .icon-inner::after {
+    background-color: #ffffff;
+}
+
+.icon-box {
+    width: 40px;
+    height: 24px;
+    display: inline-block;
+    position: relative;
+}
+
+.icon-inner {
+    display: block;
+    top: 50%;
+    margin-top: -2px;
+}
+
 .icon-inner,
 .icon-inner::before,
 .icon-inner::after {
@@ -26,3 +53,18 @@
     transition-duration: 0.15s;
     transition-timing-function: ease;
 }
+
+.icon-inner::before,
+.icon-inner::after {
+    content: "";
+    display: block;
+}
+
+.icon-inner::before {
+    top: -10px;
+}
+
+.icon-inner::after {
+    bottom: -10px;
+}
+

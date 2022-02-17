@@ -70,7 +70,7 @@
                 <button class="control-btn" onclick="onDeleteLine()" title="Delete Text" data-trans="delete-text"><img
                         src="icons/trash.png" /></button>
                 <input type="file" id="file" class="inputfile" name="image" onchange="onUploadImg(event)" />
-                <label for="file" data-trans="upload-img">Upload image</label>
+                <label for="file" data-trans="upload-img">Upload Image</label>
             </div>
             <button class="control-btn" onclick="onChangeSize(1)" title="Increase" data-trans="increase"><img
                     src="icons/increase-font.png" /></button>
@@ -82,6 +82,12 @@
                 data-trans="align_center"><img src="icons/align-center.png" /></button>
             <button class="control-btn" onclick="onChangeAlign('left')" title="Align Right"
                 data-trans="align_right"><img src="icons/align-to-right.png" /></button>
+            <select class="control-select" onchange="onChangeFont(value)" title="Choose Font" data-trans="font">
+                <option>Choose Font</option>
+                <option>Ubuntu</option>
+                <option>Sacramento</option>
+                <option>Playfair</option>
+            </select>
             <button class="control-btn"><input class="control-color-input" type="color"
                     onchange="onChangeOutlineColor(value)" title="Choose Outline color"
                     data-trans="outline-color" /><img src="icons/text-stroke.png"></button>
@@ -93,7 +99,8 @@
             <form action="" method="POST" enctype="multipart/form-data" onsubmit="uploadImg(this, event)">
                 <input name="img" id="imgData" type="hidden" />
                 <button class="control-btn share-btn" type="submit" onsubmit="uploadImg(this, event)"
-                    data-trans="share">Share on FaceBook</button></form>
+                    data-trans="share">Share On FaceBook</button></form>
+            <div class="stickers-div" title="Choose Stickers" data-trans="stickers"></div>
         </div>
     </div>
     </div>
@@ -103,7 +110,8 @@
         <p data-trans="rights">Devloped By Omer Eshkoli CaJan22</p>
     </footer>
 
-    <script src="js/local-storage.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/memegn-i18n-service.js"></script>
     <script src="js/memegen-service.js"></script>
     <script src="js/memegen-gallery-controller.js"></script>
     <script src="js/memegen-controller.js"></script>
