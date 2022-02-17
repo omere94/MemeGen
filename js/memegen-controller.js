@@ -88,7 +88,6 @@ function drawFocusRect() {
 function onChangeText(txt) {
     editMeme('txt', txt);
     gFocustxt = true;
-    gFocusSticker = false;
     renderCanvas();
 }
 
@@ -130,7 +129,6 @@ function onChangePositionX(num) {
 function onSwitchLines() {
     switchLines();
     gFocustxt = true;
-    gFocusSticker = false;
     renderCanvas();
 }
 
@@ -142,7 +140,6 @@ function onDeleteLine() {
 function onAddLine() {
     addLine();
     gFocustxt = true;
-    gFocusSticker = false;
     renderCanvas();
 }
 
@@ -235,7 +232,6 @@ function dragText(ev) {
             renderCanvas();
             gDragOn = true;
             gFocustxt = true;
-            gFocusSticker = false;
             return;
         }
         idx++;

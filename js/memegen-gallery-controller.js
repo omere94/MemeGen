@@ -100,7 +100,6 @@ function onGetGalleryPage() {
     restartMeme();
     gFirstLoad = true;
     gFocustxt = true;
-    gFocusSticker = false;
     document.querySelector('.canvas-container').style.display = "none";
     document.querySelector('.gallery-container').style.display = "grid";
     document.querySelector('.meme-container').style.display = "none";
